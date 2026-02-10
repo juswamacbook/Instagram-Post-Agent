@@ -1,0 +1,11 @@
+var R=require("../../../../../chunks/[turbopack]_runtime.js")("server/app/api/palettes/[id]/colors-from-image/route.js")
+R.c("server/chunks/b150b_next_cd0d45a0._.js")
+R.c("server/chunks/b150b_tr46_25af6e48._.js")
+R.c("server/chunks/b150b_pako_1b20b7e2._.js")
+R.c("server/chunks/b150b_utif2_UTIF_4366f873.js")
+R.c("server/chunks/b150b_xmlbuilder_lib_0fd79d33._.js")
+R.c("server/chunks/[root-of-the-server]__3e2f4d2a._.js")
+R.c("server/chunks/[root-of-the-server]__694c91f4._.js")
+R.c("server/chunks/d04ad_server_app_api_palettes_[id]_colors-from-image_route_actions_c68bc820.js")
+R.m("[project]/IG.AI/node_modules/next/dist/esm/build/templates/app-route.js { INNER_APP_ROUTE => \"[project]/IG.AI/src/app/api/palettes/[id]/colors-from-image/route.ts [app-route] (ecmascript)\" } [app-route] (ecmascript)")
+module.exports=R.m("[project]/IG.AI/node_modules/next/dist/esm/build/templates/app-route.js { INNER_APP_ROUTE => \"[project]/IG.AI/src/app/api/palettes/[id]/colors-from-image/route.ts [app-route] (ecmascript)\" } [app-route] (ecmascript)").exports

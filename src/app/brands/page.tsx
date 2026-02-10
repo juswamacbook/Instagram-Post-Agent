@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 async function readJsonSafe(res: Response) {
   try {
@@ -113,6 +113,18 @@ export default function BrandsPage() {
   const [editingPaletteId, setEditingPaletteId] = useState<string | null>(null);
   const [editingPaletteName, setEditingPaletteName] = useState("");
   const [editingPaletteColors, setEditingPaletteColors] = useState("");
+  const [newColorByPaletteId, setNewColorByPaletteId] = useState<Record<string, string>>({});
+  const [imageFileByPaletteId, setImageFileByPaletteId] = useState<Record<string, File | null>>({});
+  const [imageLoadingByPaletteId, setImageLoadingByPaletteId] = useState<Record<string, boolean>>({});
+  const [imageLoadingStepByPaletteId, setImageLoadingStepByPaletteId] = useState<Record<string, number>>({});
+  const imageLoadingTimers = useRef<Record<string, ReturnType<typeof setInterval>>>({});
+
+  const imageLoadingMessages = [
+    "Scanning your image",
+    "Reading your image",
+    "Scraping colors",
+    "Finalizing details",
+  ];
 
   const sortedBrands = useMemo(
     () => [...brands].sort((a, b) => a.name.localeCompare(b.name)),
@@ -121,9 +133,19 @@ export default function BrandsPage() {
 
   async function loadBrands() {
     setLoading(true);
+    setError(null);
     const res = await fetch("/api/brands");
-    const data = await res.json();
-    setBrands(data.brands ?? []);
+    const data = await readJsonSafe(res);
+
+    if (!res.ok) {
+      setBrands([]);
+      setError(data?.error ?? "Failed to load brands.");
+      setLoading(false);
+      return;
+    }
+
+    const nextBrands = Array.isArray(data?.brands) ? data.brands : [];
+    setBrands(nextBrands);
     setLoading(false);
   }
 
@@ -300,6 +322,123 @@ export default function BrandsPage() {
       return;
     }
     await loadBrands();
+  }
+
+  async function handleAddPaletteColor(palette: Palette) {
+    setError(null);
+    const raw = newColorByPaletteId[palette.id]?.trim() ?? "";
+    if (!raw) {
+      setError("Enter a color value to add.");
+      return;
+    }
+
+    const nextColors = Array.from(new Set([...palette.colors, raw]));
+    const res = await fetch(`/api/palettes/${palette.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ colors: nextColors }),
+    });
+
+    if (!res.ok) {
+      const data = await readJsonSafe(res);
+      setError(data?.error ?? "Failed to add color.");
+      return;
+    }
+
+    setNewColorByPaletteId((prev) => ({ ...prev, [palette.id]: "" }));
+    await loadBrands();
+  }
+
+  async function handleRemovePaletteColor(palette: Palette, colorToRemove: string) {
+    setError(null);
+    const nextColors = palette.colors.filter((color) => color !== colorToRemove);
+
+    const res = await fetch(`/api/palettes/${palette.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ colors: nextColors }),
+    });
+
+    if (!res.ok) {
+      const data = await readJsonSafe(res);
+      setError(data?.error ?? "Failed to remove color.");
+      return;
+    }
+
+    await loadBrands();
+  }
+
+  function readFileAsDataUrl(file: File) {
+    return new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === "string") resolve(reader.result);
+        else reject(new Error("Failed to read file."));
+      };
+      reader.onerror = () => reject(new Error("Failed to read file."));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function handleExtractColorsFromImage(palette: Palette) {
+    setError(null);
+    const file = imageFileByPaletteId[palette.id];
+    if (!file) {
+      setError("Pick an image to extract colors.");
+      return;
+    }
+
+    if (file.size > 6 * 1024 * 1024) {
+      setError("Image is too large (max 6MB).");
+      return;
+    }
+
+    let imageBase64: string;
+    try {
+      imageBase64 = await readFileAsDataUrl(file);
+    } catch (error) {
+      setError(String(error));
+      return;
+    }
+
+    setImageLoadingByPaletteId((prev) => ({ ...prev, [palette.id]: true }));
+    setImageLoadingStepByPaletteId((prev) => ({ ...prev, [palette.id]: 0 }));
+
+    if (imageLoadingTimers.current[palette.id]) {
+      clearInterval(imageLoadingTimers.current[palette.id]);
+    }
+
+    imageLoadingTimers.current[palette.id] = setInterval(() => {
+      setImageLoadingStepByPaletteId((prev) => {
+        const current = prev[palette.id] ?? 0;
+        const next =
+          current < imageLoadingMessages.length - 1 ? current + 1 : current;
+        return { ...prev, [palette.id]: next };
+      });
+    }, 1500);
+
+    try {
+      const res = await fetch(`/api/palettes/${palette.id}/colors-from-image`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imageBase64 }),
+      });
+
+      if (!res.ok) {
+        const data = await readJsonSafe(res);
+        setError(data?.error ?? "Failed to extract colors.");
+        return;
+      }
+
+      setImageFileByPaletteId((prev) => ({ ...prev, [palette.id]: null }));
+      await loadBrands();
+    } finally {
+      if (imageLoadingTimers.current[palette.id]) {
+        clearInterval(imageLoadingTimers.current[palette.id]);
+        delete imageLoadingTimers.current[palette.id];
+      }
+      setImageLoadingByPaletteId((prev) => ({ ...prev, [palette.id]: false }));
+    }
   }
 
   async function handleDeleteBrand(id: string) {
@@ -661,10 +800,89 @@ export default function BrandsPage() {
                                         style={{ backgroundColor: color }}
                                       />
                                       {color}
+                                      <button
+                                        type="button"
+                                        onClick={() =>
+                                          handleRemovePaletteColor(palette, color)
+                                        }
+                                        className="text-[10px] font-semibold uppercase tracking-wide text-zinc-500 hover:text-red-600"
+                                      >
+                                        Remove
+                                      </button>
                                     </span>
                                   ))
                                 )}
                               </div>
+                              <div className="mt-3 flex flex-wrap gap-2">
+                                <input
+                                  className="min-w-[180px] flex-1 rounded-lg border border-zinc-200 px-3 py-2 text-xs"
+                                  placeholder="Add color (#111111)"
+                                  value={newColorByPaletteId[palette.id] ?? ""}
+                                  onChange={(event) =>
+                                    setNewColorByPaletteId((prev) => ({
+                                      ...prev,
+                                      [palette.id]: event.target.value,
+                                    }))
+                                  }
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => handleAddPaletteColor(palette)}
+                                  className="inline-flex items-center justify-center rounded-full border border-zinc-200 bg-white px-3 py-2 text-xs font-semibold text-zinc-700"
+                                >
+                                  Add color
+                                </button>
+                              </div>
+                              <div className="mt-2 flex flex-wrap gap-2">
+                                <label className="inline-flex min-w-[180px] flex-1 cursor-pointer items-center justify-center rounded-lg border border-dashed border-zinc-300 bg-white px-3 py-2 text-xs font-semibold text-zinc-700 hover:border-zinc-400">
+                                  <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(event) =>
+                                      setImageFileByPaletteId((prev) => ({
+                                        ...prev,
+                                        [palette.id]: event.target.files?.[0] ?? null,
+                                      }))
+                                    }
+                                    className="hidden"
+                                  />
+                                  {imageFileByPaletteId[palette.id]?.name ?? "Choose image"}
+                                </label>
+                                <button
+                                  type="button"
+                                  onClick={() => handleExtractColorsFromImage(palette)}
+                                  disabled={imageLoadingByPaletteId[palette.id]}
+                                  className="inline-flex items-center justify-center rounded-full border border-zinc-200 bg-white px-3 py-2 text-xs font-semibold text-zinc-700"
+                                >
+                                  {imageLoadingByPaletteId[palette.id]
+                                    ? "Extracting..."
+                                    : "Extract from image"}
+                                </button>
+                              </div>
+                              {imageLoadingByPaletteId[palette.id] ? (
+                                <div className="mt-3">
+                                  <div className="text-xs font-semibold text-zinc-600">
+                                    {
+                                      imageLoadingMessages[
+                                        imageLoadingStepByPaletteId[palette.id] ?? 0
+                                      ]
+                                    }
+                                    ...
+                                  </div>
+                                  <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-zinc-100">
+                                    <div
+                                      className="h-full rounded-full bg-black transition-all duration-700"
+                                      style={{
+                                        width: `${Math.min(
+                                          100,
+                                          ((imageLoadingStepByPaletteId[palette.id] ?? 0) + 1) *
+                                            (100 / imageLoadingMessages.length)
+                                        )}%`,
+                                      }}
+                                    />
+                                  </div>
+                                </div>
+                              ) : null}
                             </>
                           )}
                         </div>

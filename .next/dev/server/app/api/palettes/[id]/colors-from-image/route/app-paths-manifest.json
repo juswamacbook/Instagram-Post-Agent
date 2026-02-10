@@ -1,0 +1,3 @@
+{
+  "/api/palettes/[id]/colors-from-image/route": "app/api/palettes/[id]/colors-from-image/route.js"
+}

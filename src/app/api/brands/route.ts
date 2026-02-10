@@ -2,12 +2,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export async function GET() {
-  const brands = await prisma.brand.findMany({
-    orderBy: { createdAt: "desc" },
-    include: { palettes: true },
-  });
+  try {
+    const brands = await prisma.brand.findMany({
+      orderBy: { createdAt: "desc" },
+      include: { palettes: true },
+    });
 
-  return NextResponse.json({ brands });
+    return NextResponse.json({ brands });
+  } catch (error) {
+    console.error("Failed to load brands", error);
+    return NextResponse.json(
+      { error: "Failed to load brands." },
+      { status: 500 }
+    );
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -19,12 +27,20 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const brand = await prisma.brand.create({
-    data: {
-      name: body.name.trim(),
-      handle: typeof body.handle === "string" ? body.handle.trim() : null,
-    },
-  });
+  try {
+    const brand = await prisma.brand.create({
+      data: {
+        name: body.name.trim(),
+        handle: typeof body.handle === "string" ? body.handle.trim() : null,
+      },
+    });
 
-  return NextResponse.json({ brand }, { status: 201 });
+    return NextResponse.json({ brand }, { status: 201 });
+  } catch (error) {
+    console.error("Failed to create brand", error);
+    return NextResponse.json(
+      { error: "Failed to create brand." },
+      { status: 500 }
+    );
+  }
 }
