@@ -35,3 +35,4 @@
 [00:15:26.673] Server  WARN    Error: Route "/api/brands/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
 [00:16:53.478] Server  LOG     ✓ Compiled in 5.3s
 [00:17:03.539] Server  LOG     ✓ Compiled in 3.1s
+[00:39:51.789] Server  LOG       Reload env: .env
