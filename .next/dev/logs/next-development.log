@@ -1,42 +1,37 @@
-[00:00:04.810] Server  LOG     ✓ Ready in 4.4s
-[00:00:08.781] Server  LOG     ○ Compiling /brands ...
-[00:00:18.416] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:23.606] Server  LOG     ○ Compiling /api/brands ...
-[00:00:59.846] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-[00:01:30.996] Server  WARN    Error: Route "/api/brands/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-[00:03:36.746] Server  LOG     ✓ Compiled in 2.8s
-[00:03:44.792] Server  LOG     ✓ Compiled in 3.1s
-[00:03:52.568] Server  LOG     ✓ Compiled in 1922ms
-[00:04:02.537] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:04:13.102] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-[00:04:50.716] Server  LOG     ✓ Compiled in 4.2s
-[00:05:00.138] Server  LOG     ✓ Compiled in 3.3s
-[00:05:07.203] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-[00:05:28.192] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-[00:06:11.655] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-[00:08:08.002] Server  LOG     ✓ Compiled in 5.1s
-[00:08:14.143] Server  LOG     ✓ Compiled in 1874ms
-[00:08:21.543] Server  LOG     ✓ Compiled in 1976ms
-[00:09:30.266] Server  WARN    Error: Route "/api/palettes/[id]/colors-from-image" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-[00:14:48.974] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-[00:14:50.518] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-[00:14:52.085] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-[00:18:49.739] Server  LOG     ✓ Compiled in 4.8s
-[00:20:09.854] Server  LOG     ✓ Compiled in 3.9s
-[00:20:17.752] Server  LOG     ✓ Compiled in 1312ms
-[00:20:28.710] Server  LOG     ✓ Compiled in 1614ms
-[00:20:47.857] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-[00:20:48.990] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-[00:20:49.763] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-[00:20:50.496] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-[00:20:58.709] Server  WARN    Error: Route "/api/palettes/[id]/colors-from-image" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-[00:33:39.112] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:33:43.597] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-[00:33:44.471] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-[00:33:45.269] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-[00:33:46.282] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-[00:34:04.907] Server  WARN    Error: Route "/api/palettes/[id]/colors-from-image" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-[00:34:20.137] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-[00:34:29.951] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:34:57.313] Server  WARN    Error: Route "/api/palettes/[id]/colors-from-image" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-[00:40:53.481] Server  LOG       Reload env: .env
+[00:00:02.394] Server  LOG     ✓ Ready in 1851ms
+[00:00:21.895] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:23.132] Server  LOG     ○ Compiling /brands ...
+[00:00:28.240] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:58.666] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:00:58.965] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:01:01.543] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:01:03.513] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:01:05.119] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:01:06.851] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:01:08.442] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:02:26.935] Server  LOG     ✓ Compiled in 5.8s
+[00:03:00.356] Server  WARN    Error: Route "/api/palettes/[id]/colors-from-image" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:03:04.693] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:03:46.006] Server  LOG     ✓ Compiled in 1462ms
+[00:05:11.536] Server  WARN    Error: Route "/api/palettes/[id]/colors-from-image" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:05:23.287] Server  WARN    Error: Route "/api/palettes/[id]/colors-from-image" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:05:32.207] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:05:33.155] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:05:34.029] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:05:35.754] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:05:37.119] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:05:37.906] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:05:38.499] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:05:40.246] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:05:40.960] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:05:41.481] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:05:42.037] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:05:42.601] Server  WARN    Error: Route "/api/palettes/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:13:35.051] Server  LOG     ✓ Compiled in 646ms
+[00:13:52.249] Server  LOG     ✓ Compiled in 1757ms
+[00:14:03.079] Server  LOG     ✓ Compiled in 1822ms
+[00:14:51.084] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:15:26.038] Server  WARN    Error: Route "/api/brands/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:15:26.673] Server  WARN    Error: Route "/api/brands/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:16:53.478] Server  LOG     ✓ Compiled in 5.3s
+[00:17:03.539] Server  LOG     ✓ Compiled in 3.1s

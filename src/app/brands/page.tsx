@@ -37,9 +37,17 @@ type AiPaletteSuggestion = {
   colors: string[];
 };
 
+type AiDesignVariation = {
+  title: string;
+  style_relation: string;
+  concept_description: string;
+  mockup: string;
+};
+
 type AiResult = {
   palette_suggestions: AiPaletteSuggestion[];
   mood_captions: string[];
+  design_variations: AiDesignVariation[];
 };
 
 function normalizeAiResult(input: unknown): AiResult | null {
@@ -47,6 +55,7 @@ function normalizeAiResult(input: unknown): AiResult | null {
   const data = input as {
     palette_suggestions?: unknown;
     mood_captions?: unknown;
+    design_variations?: unknown;
   };
 
   const palettes = Array.isArray(data.palette_suggestions)
@@ -86,9 +95,39 @@ function normalizeAiResult(input: unknown): AiResult | null {
       })
     : [];
 
+  const designVariations = Array.isArray(data.design_variations)
+    ? data.design_variations
+        .map((item) => {
+          if (!item || typeof item !== "object") return null;
+          const obj = item as {
+            title?: unknown;
+            style_relation?: unknown;
+            concept_description?: unknown;
+            mockup?: unknown;
+          };
+          return {
+            title: typeof obj.title === "string" ? obj.title : "Untitled concept",
+            style_relation:
+              typeof obj.style_relation === "string"
+                ? obj.style_relation
+                : "Style relation not provided.",
+            concept_description:
+              typeof obj.concept_description === "string"
+                ? obj.concept_description
+                : "Concept description not provided.",
+            mockup:
+              typeof obj.mockup === "string"
+                ? obj.mockup
+                : "Mockup direction not provided.",
+          };
+        })
+        .filter(Boolean)
+    : [];
+
   return {
     palette_suggestions: palettes as AiPaletteSuggestion[],
     mood_captions: captions,
+    design_variations: designVariations as AiDesignVariation[],
   };
 }
 
@@ -103,6 +142,9 @@ export default function BrandsPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [aiLoadingId, setAiLoadingId] = useState<string | null>(null);
+  const [aiImageFileByBrandId, setAiImageFileByBrandId] = useState<Record<string, File | null>>({});
+  const [aiLoadingStepByBrandId, setAiLoadingStepByBrandId] = useState<Record<string, number>>({});
+  const aiLoadingTimers = useRef<Record<string, ReturnType<typeof setInterval>>>({});
   const [aiByBrandId, setAiByBrandId] = useState<Record<string, AiResult | null>>({});
   const [aiRawByBrandId, setAiRawByBrandId] = useState<Record<string, string | null>>({});
 
@@ -124,6 +166,12 @@ export default function BrandsPage() {
     "Reading your image",
     "Scraping colors",
     "Finalizing details",
+  ];
+  const aiLoadingMessages = [
+    "Analyzing style",
+    "Composing variations",
+    "Refining concepts",
+    "Finalizing designs",
   ];
 
   const sortedBrands = useMemo(
@@ -289,29 +337,66 @@ export default function BrandsPage() {
 
   async function handleGenerateAi(brand: Brand) {
     setError(null);
-    setAiLoadingId(brand.id);
-
-    const res = await fetch("/api/ai/brand", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ brandId: brand.id }),
-    });
-
-    if (!res.ok) {
-      const data = await readJsonSafe(res);
-      const detail = typeof data?.detail === "string" ? ` ${data.detail}` : "";
-      setError((data?.error ?? "Failed to generate AI suggestions.") + detail);
-      setAiLoadingId(null);
+    const file = aiImageFileByBrandId[brand.id];
+    if (!file) {
+      setError("Pick an image before generating design variations.");
       return;
     }
 
-    const data = await readJsonSafe(res);
-    const rawText = typeof data?.raw === "string" ? data.raw : null;
-    const result = data?.result ?? (rawText ? safeJsonParse(rawText) : null);
-    const normalized = normalizeAiResult(result);
-    setAiByBrandId((prev) => ({ ...prev, [brand.id]: normalized }));
-    setAiRawByBrandId((prev) => ({ ...prev, [brand.id]: rawText }));
-    setAiLoadingId(null);
+    if (file.size > 6 * 1024 * 1024) {
+      setError("Image is too large (max 6MB).");
+      return;
+    }
+
+    let imageBase64: string;
+    try {
+      imageBase64 = await readFileAsDataUrl(file);
+    } catch (error) {
+      setError(String(error));
+      return;
+    }
+
+    setAiLoadingId(brand.id);
+    setAiLoadingStepByBrandId((prev) => ({ ...prev, [brand.id]: 0 }));
+    if (aiLoadingTimers.current[brand.id]) {
+      clearInterval(aiLoadingTimers.current[brand.id]);
+    }
+    aiLoadingTimers.current[brand.id] = setInterval(() => {
+      setAiLoadingStepByBrandId((prev) => {
+        const current = prev[brand.id] ?? 0;
+        const next = current < aiLoadingMessages.length - 1 ? current + 1 : current;
+        return { ...prev, [brand.id]: next };
+      });
+    }, 900);
+
+    try {
+      const res = await fetch("/api/ai/brand", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ brandId: brand.id, imageBase64 }),
+      });
+
+      if (!res.ok) {
+        const data = await readJsonSafe(res);
+        const detail = typeof data?.detail === "string" ? ` ${data.detail}` : "";
+        setError((data?.error ?? "Failed to generate AI suggestions.") + detail);
+        return;
+      }
+
+      const data = await readJsonSafe(res);
+      const rawText = typeof data?.raw === "string" ? data.raw : null;
+      const result = data?.result ?? (rawText ? safeJsonParse(rawText) : null);
+      const normalized = normalizeAiResult(result);
+      setAiByBrandId((prev) => ({ ...prev, [brand.id]: normalized }));
+      setAiRawByBrandId((prev) => ({ ...prev, [brand.id]: rawText }));
+      setAiImageFileByBrandId((prev) => ({ ...prev, [brand.id]: null }));
+    } finally {
+      if (aiLoadingTimers.current[brand.id]) {
+        clearInterval(aiLoadingTimers.current[brand.id]);
+        delete aiLoadingTimers.current[brand.id];
+      }
+      setAiLoadingId(null);
+    }
   }
 
   async function handleDeletePalette(id: string) {
@@ -359,13 +444,28 @@ export default function BrandsPage() {
       body: JSON.stringify({ colors: nextColors }),
     });
 
+    const data = await readJsonSafe(res);
     if (!res.ok) {
-      const data = await readJsonSafe(res);
       setError(data?.error ?? "Failed to remove color.");
       return;
     }
 
-    await loadBrands();
+    const updatedColors: string[] = Array.isArray(data?.palette?.colors)
+      ? data.palette.colors.filter((color: unknown): color is string => typeof color === "string")
+      : nextColors;
+
+    setBrands((prev) =>
+      prev.map((brand) =>
+        brand.id === palette.brandId
+          ? {
+              ...brand,
+              palettes: brand.palettes.map((item) =>
+                item.id === palette.id ? { ...item, colors: updatedColors } : item
+              ),
+            }
+          : brand
+      )
+    );
   }
 
   function readFileAsDataUrl(file: File) {
@@ -547,12 +647,6 @@ export default function BrandsPage() {
         <section className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">Your brands</h2>
-            <button
-              onClick={loadBrands}
-              className="text-sm font-semibold text-zinc-600 hover:text-black"
-            >
-              Refresh
-            </button>
           </div>
 
           {loading ? (
@@ -641,20 +735,84 @@ export default function BrandsPage() {
                       <div>
                         <p className="text-sm font-semibold">AI suggestions</p>
                         <p className="text-xs text-zinc-500">
-                          Generate palette ideas and mood captions for this brand.
+                          Generate stylistically similar design concept variations.
                         </p>
                       </div>
-                      <button
-                        onClick={() => handleGenerateAi(brand)}
-                        className="inline-flex items-center justify-center rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-semibold text-zinc-700"
-                        disabled={aiLoadingId === brand.id}
-                      >
-                        {aiLoadingId === brand.id ? "Generating..." : "Generate"}
-                      </button>
+                      <div className="flex min-w-[240px] flex-col items-stretch gap-2">
+                        <label className="inline-flex cursor-pointer items-center justify-center rounded-lg border border-dashed border-zinc-300 bg-white px-3 py-2 text-xs font-semibold text-zinc-700 hover:border-zinc-400">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(event) =>
+                              setAiImageFileByBrandId((prev) => ({
+                                ...prev,
+                                [brand.id]: event.target.files?.[0] ?? null,
+                              }))
+                            }
+                            className="hidden"
+                          />
+                          {aiImageFileByBrandId[brand.id]?.name ?? "Choose reference image"}
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => handleGenerateAi(brand)}
+                          className="inline-flex items-center justify-center rounded-full border border-zinc-200 bg-white px-3 py-2 text-xs font-semibold text-zinc-700"
+                          disabled={aiLoadingId === brand.id}
+                        >
+                          {aiLoadingId === brand.id ? "Generating..." : "Generate"}
+                        </button>
+                      </div>
                     </div>
+                    {aiLoadingId === brand.id ? (
+                      <div className="mt-3 rounded-lg border border-zinc-200 bg-white px-3 py-2">
+                        <p className="text-xs text-zinc-500">
+                          {aiLoadingMessages[aiLoadingStepByBrandId[brand.id] ?? 0]}
+                        </p>
+                        <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-zinc-100">
+                          <div
+                            className="h-full rounded-full bg-black transition-all duration-500"
+                            style={{
+                              width: `${
+                                ((aiLoadingStepByBrandId[brand.id] ?? 0) + 1) *
+                                (100 / aiLoadingMessages.length)
+                              }%`,
+                            }}
+                          />
+                        </div>
+                      </div>
+                    ) : null}
 
                     {aiByBrandId[brand.id] ? (
                       <div className="mt-4 grid gap-4">
+                        {aiByBrandId[brand.id]?.design_variations?.length ? (
+                          <div>
+                            <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                              Design variations
+                            </p>
+                            <div className="mt-2 grid gap-3">
+                              {aiByBrandId[brand.id]?.design_variations?.map((variation, index) => (
+                                <div
+                                  key={`${brand.id}-ai-variation-${index}`}
+                                  className="rounded-lg border border-zinc-200 bg-white px-3 py-3"
+                                >
+                                  <p className="text-sm font-semibold">{variation.title}</p>
+                                  <p className="mt-2 text-xs text-zinc-600">
+                                    <span className="font-semibold text-zinc-700">Style relation:</span>{" "}
+                                    {variation.style_relation}
+                                  </p>
+                                  <p className="mt-2 text-xs text-zinc-600">
+                                    <span className="font-semibold text-zinc-700">Concept:</span>{" "}
+                                    {variation.concept_description}
+                                  </p>
+                                  <p className="mt-2 text-xs text-zinc-600">
+                                    <span className="font-semibold text-zinc-700">Mockup:</span>{" "}
+                                    {variation.mockup}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ) : null}
                         <div>
                           <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
                             Palette suggestions

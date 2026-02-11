@@ -431,6 +431,10 @@
 @layer components;
 
 @layer utilities {
+  .visible {
+    visibility: visible;
+  }
+
   .container {
     width: 100%;
   }
@@ -537,6 +541,10 @@
     min-width: 180px;
   }
 
+  .min-w-\[240px\] {
+    min-width: 240px;
+  }
+
   .flex-1 {
     flex: 1;
   }
@@ -563,6 +571,10 @@
 
   .items-start {
     align-items: flex-start;
+  }
+
+  .items-stretch {
+    align-items: stretch;
   }
 
   .justify-between {
@@ -805,6 +817,11 @@
     transition-property: all;
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
     transition-duration: var(--tw-duration, var(--default-transition-duration));
+  }
+
+  .duration-500 {
+    --tw-duration: .5s;
+    transition-duration: .5s;
   }
 
   .duration-700 {

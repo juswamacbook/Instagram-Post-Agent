@@ -54,8 +54,6 @@ Create or update `.env`:
 
 ```
 DATABASE_URL="postgresql://igai:igai_password@localhost:5432/ig_ai?schema=public"
-OLLAMA_BASE_URL="http://localhost:11434"
-OLLAMA_MODEL="llama3.1:8b"
 ```
 
 ### 4) Create DB schema

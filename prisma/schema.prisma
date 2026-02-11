@@ -60,3 +60,28 @@ model Post {
   brandId     String
   brand       Brand    @relation(fields: [brandId], references: [id])
 }
+
+model DesignJob {
+  id         String   @id @default(cuid())
+  status     String   @default("CREATED") // CREATED, UPLOADED, RUNNING, SUCCEEDED, FAILED
+  progress   Int      @default(0)
+  inputKey   String?  // S3 key for uploaded image
+  styleBrief Json?
+  error      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  outputs    DesignOutput[]
+}
+
+model DesignOutput {
+  id        String   @id @default(cuid())
+  jobId     String
+  job       DesignJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  variant   Int
+  outputKey String   // S3 key for generated image
+  createdAt DateTime @default(now())
+
+  @@unique([jobId, variant])
+}
+
