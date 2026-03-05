@@ -50,6 +50,12 @@ type AiResult = {
   design_variations: AiDesignVariation[];
 };
 
+type UploadResponse = {
+  assetId: string;
+  bucket: string;
+  originalPath: string;
+};
+
 function normalizeAiResult(input: unknown): AiResult | null {
   if (!input || typeof input !== "object") return null;
   const data = input as {
@@ -348,6 +354,13 @@ export default function BrandsPage() {
       return;
     }
 
+    try {
+      await uploadToSupabaseStorage(file, "ai/generate");
+    } catch (uploadError) {
+      setError(String(uploadError));
+      return;
+    }
+
     let imageBase64: string;
     try {
       imageBase64 = await readFileAsDataUrl(file);
@@ -480,6 +493,38 @@ export default function BrandsPage() {
     });
   }
 
+  async function uploadToSupabaseStorage(file: File, source: string) {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    console.info(`[brands] Uploading source image (${source})`, {
+      endpoint: "/api/upload",
+      name: file.name,
+      type: file.type,
+      size: file.size,
+    });
+
+    const res = await fetch("/api/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = (await readJsonSafe(res)) as
+      | UploadResponse
+      | { error?: string; detail?: string }
+      | null;
+
+    if (!res.ok) {
+      console.error(`[brands] Upload failed (${source})`, data);
+      const errorMessage = typeof data?.error === "string" ? data.error : "Upload failed.";
+      const detail = typeof data?.detail === "string" ? ` ${data.detail}` : "";
+      throw new Error(`${errorMessage}${detail}`);
+    }
+
+    console.info(`[brands] Upload success (${source})`, data);
+    return data as UploadResponse;
+  }
+
   async function handleExtractColorsFromImage(palette: Palette) {
     setError(null);
     const file = imageFileByPaletteId[palette.id];
@@ -490,6 +535,13 @@ export default function BrandsPage() {
 
     if (file.size > 6 * 1024 * 1024) {
       setError("Image is too large (max 6MB).");
+      return;
+    }
+
+    try {
+      await uploadToSupabaseStorage(file, "palette/extract-colors");
+    } catch (uploadError) {
+      setError(String(uploadError));
       return;
     }
 
@@ -743,12 +795,19 @@ export default function BrandsPage() {
                           <input
                             type="file"
                             accept="image/*"
-                            onChange={(event) =>
+                            onChange={(event) => {
+                              const file = event.target.files?.[0] ?? null;
+                              console.info("[brands] AI file selected", {
+                                brandId: brand.id,
+                                name: file?.name ?? null,
+                                type: file?.type ?? null,
+                                size: file?.size ?? null,
+                              });
                               setAiImageFileByBrandId((prev) => ({
                                 ...prev,
-                                [brand.id]: event.target.files?.[0] ?? null,
-                              }))
-                            }
+                                [brand.id]: file,
+                              }));
+                            }}
                             className="hidden"
                           />
                           {aiImageFileByBrandId[brand.id]?.name ?? "Choose reference image"}

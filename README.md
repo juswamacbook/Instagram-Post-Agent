@@ -28,7 +28,67 @@ An AI-powered agent that analyzes an Instagram brand’s aesthetic and generates
 
 ---
 
-## Setup
+## Supabase Setup (IG.AI Design Director, No Docker)
+
+### 1) Create a Supabase project
+
+- In Supabase, create a project and copy:
+- `Project URL`
+- `anon public key`
+- `service_role key`
+
+### 2) Configure environment
+
+Create `.env.local` (or update `.env`) using `.env.example`:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL="https://YOUR_PROJECT_REF.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="YOUR_SUPABASE_ANON_KEY"
+SUPABASE_SERVICE_ROLE_KEY="YOUR_SUPABASE_SERVICE_ROLE_KEY"
+OLLAMA_BASE_URL="http://localhost:11434"
+OLLAMA_MODEL="qcwind/qwen2.5-7B-instruct-Q4_K_M"
+```
+
+`OLLAMA_MODEL` can also be set to `llama3.1:8b`.
+
+### 3) Run SQL migration in Supabase
+
+Open Supabase SQL Editor and run:
+
+```sql
+-- MVP assets table only:
+-- file: supabase/migrations/20260304_assets_mvp.sql
+
+-- Optional expanded pipeline tables + policies:
+-- file: supabase/migrations/20260304_design_director.sql
+```
+
+This creates:
+- `assets`
+- private buckets: `uploads`, `renders` are expected to already exist in Storage
+
+For upload MVP, buckets remain private and previews are fetched via signed URLs.
+
+### 4) Install and run
+
+```bash
+npm install
+npm run dev
+```
+
+API endpoints added:
+- `POST /api/upload` (server-side upload to private `uploads` bucket + insert into `assets`)
+- `POST /api/assets/signed-url` (signed preview URL for private upload)
+- `POST /api/assets/upload` (authenticated variant from earlier pipeline)
+- `POST /api/designs/generate`
+
+Test page:
+- Open `http://localhost:3000/upload-test`
+- Select a PNG/JPEG and click **Upload & Preview**
+
+---
+
+## Legacy Prisma Setup
 
 ### 1) Install dependencies
 

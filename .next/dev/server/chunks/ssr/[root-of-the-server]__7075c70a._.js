@@ -263,6 +263,12 @@ function BrandsPage() {
             setError("Image is too large (max 6MB).");
             return;
         }
+        try {
+            await uploadToSupabaseStorage(file, "ai/generate");
+        } catch (uploadError) {
+            setError(String(uploadError));
+            return;
+        }
         let imageBase64;
         try {
             imageBase64 = await readFileAsDataUrl(file);
@@ -408,6 +414,29 @@ function BrandsPage() {
             reader.readAsDataURL(file);
         });
     }
+    async function uploadToSupabaseStorage(file, source) {
+        const formData = new FormData();
+        formData.append("file", file);
+        console.info(`[brands] Uploading source image (${source})`, {
+            endpoint: "/api/upload",
+            name: file.name,
+            type: file.type,
+            size: file.size
+        });
+        const res = await fetch("/api/upload", {
+            method: "POST",
+            body: formData
+        });
+        const data = await readJsonSafe(res);
+        if (!res.ok) {
+            console.error(`[brands] Upload failed (${source})`, data);
+            const errorMessage = typeof data?.error === "string" ? data.error : "Upload failed.";
+            const detail = typeof data?.detail === "string" ? ` ${data.detail}` : "";
+            throw new Error(`${errorMessage}${detail}`);
+        }
+        console.info(`[brands] Upload success (${source})`, data);
+        return data;
+    }
     async function handleExtractColorsFromImage(palette) {
         setError(null);
         const file = imageFileByPaletteId[palette.id];
@@ -417,6 +446,12 @@ function BrandsPage() {
         }
         if (file.size > 6 * 1024 * 1024) {
             setError("Image is too large (max 6MB).");
+            return;
+        }
+        try {
+            await uploadToSupabaseStorage(file, "palette/extract-colors");
+        } catch (uploadError) {
+            setError(String(uploadError));
             return;
         }
         let imageBase64;
@@ -502,7 +537,7 @@ function BrandsPage() {
                             children: "Brand Workspace"
                         }, void 0, false, {
                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                            lineNumber: 558,
+                            lineNumber: 610,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
@@ -510,7 +545,7 @@ function BrandsPage() {
                             children: "Create brands and palettes"
                         }, void 0, false, {
                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                            lineNumber: 561,
+                            lineNumber: 613,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -518,13 +553,13 @@ function BrandsPage() {
                             children: "Keep your Instagram aesthetic consistent by defining brand palettes. Next we will connect this to AI captioning and image guidance."
                         }, void 0, false, {
                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                            lineNumber: 564,
+                            lineNumber: 616,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                    lineNumber: 557,
+                    lineNumber: 609,
                     columnNumber: 9
                 }, this),
                 error ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -532,7 +567,7 @@ function BrandsPage() {
                     children: error
                 }, void 0, false, {
                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                    lineNumber: 571,
+                    lineNumber: 623,
                     columnNumber: 11
                 }, this) : null,
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -547,7 +582,7 @@ function BrandsPage() {
                                     children: "Create a brand"
                                 }, void 0, false, {
                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                    lineNumber: 581,
+                                    lineNumber: 633,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -561,7 +596,7 @@ function BrandsPage() {
                                             required: true
                                         }, void 0, false, {
                                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                            lineNumber: 583,
+                                            lineNumber: 635,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -571,13 +606,13 @@ function BrandsPage() {
                                             onChange: (event)=>setBrandHandle(event.target.value)
                                         }, void 0, false, {
                                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                            lineNumber: 590,
+                                            lineNumber: 642,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                    lineNumber: 582,
+                                    lineNumber: 634,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -586,13 +621,13 @@ function BrandsPage() {
                                     children: "Save brand"
                                 }, void 0, false, {
                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                    lineNumber: 597,
+                                    lineNumber: 649,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                            lineNumber: 577,
+                            lineNumber: 629,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -604,7 +639,7 @@ function BrandsPage() {
                                     children: "Add a palette"
                                 }, void 0, false, {
                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                    lineNumber: 609,
+                                    lineNumber: 661,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -621,7 +656,7 @@ function BrandsPage() {
                                                     children: "Select a brand"
                                                 }, void 0, false, {
                                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                    lineNumber: 617,
+                                                    lineNumber: 669,
                                                     columnNumber: 17
                                                 }, this),
                                                 sortedBrands.map((brand)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -629,13 +664,13 @@ function BrandsPage() {
                                                         children: brand.name
                                                     }, brand.id, false, {
                                                         fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                        lineNumber: 619,
+                                                        lineNumber: 671,
                                                         columnNumber: 19
                                                     }, this))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                            lineNumber: 611,
+                                            lineNumber: 663,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -646,7 +681,7 @@ function BrandsPage() {
                                             required: true
                                         }, void 0, false, {
                                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                            lineNumber: 624,
+                                            lineNumber: 676,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -656,13 +691,13 @@ function BrandsPage() {
                                             onChange: (event)=>setPaletteColors(event.target.value)
                                         }, void 0, false, {
                                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                            lineNumber: 631,
+                                            lineNumber: 683,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                    lineNumber: 610,
+                                    lineNumber: 662,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -671,19 +706,19 @@ function BrandsPage() {
                                     children: "Save palette"
                                 }, void 0, false, {
                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                    lineNumber: 638,
+                                    lineNumber: 690,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                            lineNumber: 605,
+                            lineNumber: 657,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                    lineNumber: 576,
+                    lineNumber: 628,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -696,12 +731,12 @@ function BrandsPage() {
                                 children: "Your brands"
                             }, void 0, false, {
                                 fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                lineNumber: 649,
+                                lineNumber: 701,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                            lineNumber: 648,
+                            lineNumber: 700,
                             columnNumber: 11
                         }, this),
                         loading ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -709,14 +744,14 @@ function BrandsPage() {
                             children: "Loading brands..."
                         }, void 0, false, {
                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                            lineNumber: 653,
+                            lineNumber: 705,
                             columnNumber: 13
                         }, this) : sortedBrands.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: "text-sm text-zinc-500",
                             children: "No brands yet. Create your first one above."
                         }, void 0, false, {
                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                            lineNumber: 655,
+                            lineNumber: 707,
                             columnNumber: 13
                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: "grid gap-4",
@@ -739,7 +774,7 @@ function BrandsPage() {
                                                                 required: true
                                                             }, void 0, false, {
                                                                 fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                lineNumber: 672,
+                                                                lineNumber: 724,
                                                                 columnNumber: 27
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -749,7 +784,7 @@ function BrandsPage() {
                                                                 placeholder: "Instagram handle"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                lineNumber: 680,
+                                                                lineNumber: 732,
                                                                 columnNumber: 27
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -761,7 +796,7 @@ function BrandsPage() {
                                                                         children: "Save"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                        lineNumber: 689,
+                                                                        lineNumber: 741,
                                                                         columnNumber: 29
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -771,19 +806,19 @@ function BrandsPage() {
                                                                         children: "Cancel"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                        lineNumber: 695,
+                                                                        lineNumber: 747,
                                                                         columnNumber: 29
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                lineNumber: 688,
+                                                                lineNumber: 740,
                                                                 columnNumber: 27
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                        lineNumber: 668,
+                                                        lineNumber: 720,
                                                         columnNumber: 25
                                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
                                                         children: [
@@ -792,7 +827,7 @@ function BrandsPage() {
                                                                 children: brand.name
                                                             }, void 0, false, {
                                                                 fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                lineNumber: 706,
+                                                                lineNumber: 758,
                                                                 columnNumber: 27
                                                             }, this),
                                                             brand.handle ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -803,14 +838,14 @@ function BrandsPage() {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                lineNumber: 708,
+                                                                lineNumber: 760,
                                                                 columnNumber: 29
                                                             }, this) : null
                                                         ]
                                                     }, void 0, true)
                                                 }, void 0, false, {
                                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                    lineNumber: 666,
+                                                    lineNumber: 718,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -822,7 +857,7 @@ function BrandsPage() {
                                                             children: "Edit"
                                                         }, void 0, false, {
                                                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                            lineNumber: 717,
+                                                            lineNumber: 769,
                                                             columnNumber: 25
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -831,19 +866,19 @@ function BrandsPage() {
                                                             children: "Delete"
                                                         }, void 0, false, {
                                                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                            lineNumber: 724,
+                                                            lineNumber: 776,
                                                             columnNumber: 23
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                    lineNumber: 715,
+                                                    lineNumber: 767,
                                                     columnNumber: 21
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                            lineNumber: 665,
+                                            lineNumber: 717,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -859,7 +894,7 @@ function BrandsPage() {
                                                                     children: "AI suggestions"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                    lineNumber: 736,
+                                                                    lineNumber: 788,
                                                                     columnNumber: 25
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -867,13 +902,13 @@ function BrandsPage() {
                                                                     children: "Generate stylistically similar design concept variations."
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                    lineNumber: 737,
+                                                                    lineNumber: 789,
                                                                     columnNumber: 25
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                            lineNumber: 735,
+                                                            lineNumber: 787,
                                                             columnNumber: 23
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -885,21 +920,30 @@ function BrandsPage() {
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                                                             type: "file",
                                                                             accept: "image/*",
-                                                                            onChange: (event)=>setAiImageFileByBrandId((prev)=>({
+                                                                            onChange: (event)=>{
+                                                                                const file = event.target.files?.[0] ?? null;
+                                                                                console.info("[brands] AI file selected", {
+                                                                                    brandId: brand.id,
+                                                                                    name: file?.name ?? null,
+                                                                                    type: file?.type ?? null,
+                                                                                    size: file?.size ?? null
+                                                                                });
+                                                                                setAiImageFileByBrandId((prev)=>({
                                                                                         ...prev,
-                                                                                        [brand.id]: event.target.files?.[0] ?? null
-                                                                                    })),
+                                                                                        [brand.id]: file
+                                                                                    }));
+                                                                            },
                                                                             className: "hidden"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                            lineNumber: 743,
+                                                                            lineNumber: 795,
                                                                             columnNumber: 27
                                                                         }, this),
                                                                         aiImageFileByBrandId[brand.id]?.name ?? "Choose reference image"
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                    lineNumber: 742,
+                                                                    lineNumber: 794,
                                                                     columnNumber: 25
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -910,19 +954,19 @@ function BrandsPage() {
                                                                     children: aiLoadingId === brand.id ? "Generating..." : "Generate"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                    lineNumber: 756,
+                                                                    lineNumber: 815,
                                                                     columnNumber: 25
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                            lineNumber: 741,
+                                                            lineNumber: 793,
                                                             columnNumber: 23
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                    lineNumber: 734,
+                                                    lineNumber: 786,
                                                     columnNumber: 21
                                                 }, this),
                                                 aiLoadingId === brand.id ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -933,7 +977,7 @@ function BrandsPage() {
                                                             children: aiLoadingMessages[aiLoadingStepByBrandId[brand.id] ?? 0]
                                                         }, void 0, false, {
                                                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                            lineNumber: 768,
+                                                            lineNumber: 827,
                                                             columnNumber: 25
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -945,18 +989,18 @@ function BrandsPage() {
                                                                 }
                                                             }, void 0, false, {
                                                                 fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                lineNumber: 772,
+                                                                lineNumber: 831,
                                                                 columnNumber: 27
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                            lineNumber: 771,
+                                                            lineNumber: 830,
                                                             columnNumber: 25
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                    lineNumber: 767,
+                                                    lineNumber: 826,
                                                     columnNumber: 23
                                                 }, this) : null,
                                                 aiByBrandId[brand.id] ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -969,7 +1013,7 @@ function BrandsPage() {
                                                                     children: "Design variations"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                    lineNumber: 789,
+                                                                    lineNumber: 848,
                                                                     columnNumber: 29
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -982,7 +1026,7 @@ function BrandsPage() {
                                                                                     children: variation.title
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                                    lineNumber: 798,
+                                                                                    lineNumber: 857,
                                                                                     columnNumber: 35
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -993,7 +1037,7 @@ function BrandsPage() {
                                                                                             children: "Style relation:"
                                                                                         }, void 0, false, {
                                                                                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                                            lineNumber: 800,
+                                                                                            lineNumber: 859,
                                                                                             columnNumber: 37
                                                                                         }, this),
                                                                                         " ",
@@ -1001,7 +1045,7 @@ function BrandsPage() {
                                                                                     ]
                                                                                 }, void 0, true, {
                                                                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                                    lineNumber: 799,
+                                                                                    lineNumber: 858,
                                                                                     columnNumber: 35
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1012,7 +1056,7 @@ function BrandsPage() {
                                                                                             children: "Concept:"
                                                                                         }, void 0, false, {
                                                                                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                                            lineNumber: 804,
+                                                                                            lineNumber: 863,
                                                                                             columnNumber: 37
                                                                                         }, this),
                                                                                         " ",
@@ -1020,7 +1064,7 @@ function BrandsPage() {
                                                                                     ]
                                                                                 }, void 0, true, {
                                                                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                                    lineNumber: 803,
+                                                                                    lineNumber: 862,
                                                                                     columnNumber: 35
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1031,7 +1075,7 @@ function BrandsPage() {
                                                                                             children: "Mockup:"
                                                                                         }, void 0, false, {
                                                                                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                                            lineNumber: 808,
+                                                                                            lineNumber: 867,
                                                                                             columnNumber: 37
                                                                                         }, this),
                                                                                         " ",
@@ -1039,24 +1083,24 @@ function BrandsPage() {
                                                                                     ]
                                                                                 }, void 0, true, {
                                                                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                                    lineNumber: 807,
+                                                                                    lineNumber: 866,
                                                                                     columnNumber: 35
                                                                                 }, this)
                                                                             ]
                                                                         }, `${brand.id}-ai-variation-${index}`, true, {
                                                                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                            lineNumber: 794,
+                                                                            lineNumber: 853,
                                                                             columnNumber: 33
                                                                         }, this))
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                    lineNumber: 792,
+                                                                    lineNumber: 851,
                                                                     columnNumber: 29
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                            lineNumber: 788,
+                                                            lineNumber: 847,
                                                             columnNumber: 27
                                                         }, this) : null,
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1066,7 +1110,7 @@ function BrandsPage() {
                                                                     children: "Palette suggestions"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                    lineNumber: 817,
+                                                                    lineNumber: 876,
                                                                     columnNumber: 27
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1079,7 +1123,7 @@ function BrandsPage() {
                                                                                     children: item.name
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                                    lineNumber: 826,
+                                                                                    lineNumber: 885,
                                                                                     columnNumber: 33
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1094,36 +1138,36 @@ function BrandsPage() {
                                                                                                     }
                                                                                                 }, void 0, false, {
                                                                                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                                                    lineNumber: 833,
+                                                                                                    lineNumber: 892,
                                                                                                     columnNumber: 39
                                                                                                 }, this),
                                                                                                 color
                                                                                             ]
                                                                                         }, `${brand.id}-ai-${item.name}-${color}`, true, {
                                                                                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                                            lineNumber: 829,
+                                                                                            lineNumber: 888,
                                                                                             columnNumber: 37
                                                                                         }, this))
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                                    lineNumber: 827,
+                                                                                    lineNumber: 886,
                                                                                     columnNumber: 33
                                                                                 }, this)
                                                                             ]
                                                                         }, `${brand.id}-ai-palette-${index}`, true, {
                                                                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                            lineNumber: 822,
+                                                                            lineNumber: 881,
                                                                             columnNumber: 31
                                                                         }, this))
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                    lineNumber: 820,
+                                                                    lineNumber: 879,
                                                                     columnNumber: 27
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                            lineNumber: 816,
+                                                            lineNumber: 875,
                                                             columnNumber: 25
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1133,7 +1177,7 @@ function BrandsPage() {
                                                                     children: "Mood captions"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                    lineNumber: 846,
+                                                                    lineNumber: 905,
                                                                     columnNumber: 27
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
@@ -1143,25 +1187,25 @@ function BrandsPage() {
                                                                             children: caption
                                                                         }, `${brand.id}-ai-caption-${index}`, false, {
                                                                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                            lineNumber: 852,
+                                                                            lineNumber: 911,
                                                                             columnNumber: 33
                                                                         }, this)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
                                                                         className: "text-xs text-zinc-500",
                                                                         children: "No captions returned."
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                        lineNumber: 860,
+                                                                        lineNumber: 919,
                                                                         columnNumber: 31
                                                                     }, this)
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                    lineNumber: 849,
+                                                                    lineNumber: 908,
                                                                     columnNumber: 27
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                            lineNumber: 845,
+                                                            lineNumber: 904,
                                                             columnNumber: 25
                                                         }, this),
                                                         aiRawByBrandId[brand.id] ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1169,26 +1213,26 @@ function BrandsPage() {
                                                             children: aiRawByBrandId[brand.id]
                                                         }, void 0, false, {
                                                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                            lineNumber: 865,
+                                                            lineNumber: 924,
                                                             columnNumber: 27
                                                         }, this) : null
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                    lineNumber: 786,
+                                                    lineNumber: 845,
                                                     columnNumber: 23
                                                 }, this) : aiRawByBrandId[brand.id] ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                     className: "mt-3 text-xs text-zinc-600",
                                                     children: aiRawByBrandId[brand.id]
                                                 }, void 0, false, {
                                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                    lineNumber: 871,
+                                                    lineNumber: 930,
                                                     columnNumber: 23
                                                 }, this) : null
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                            lineNumber: 733,
+                                            lineNumber: 785,
                                             columnNumber: 19
                                         }, this),
                                         brand.palettes.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1196,7 +1240,7 @@ function BrandsPage() {
                                             children: "No palettes yet."
                                         }, void 0, false, {
                                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                            lineNumber: 878,
+                                            lineNumber: 937,
                                             columnNumber: 21
                                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             className: "mt-4 grid gap-3",
@@ -1213,7 +1257,7 @@ function BrandsPage() {
                                                                 required: true
                                                             }, void 0, false, {
                                                                 fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                lineNumber: 893,
+                                                                lineNumber: 952,
                                                                 columnNumber: 31
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1222,7 +1266,7 @@ function BrandsPage() {
                                                                 onChange: (event)=>setEditingPaletteColors(event.target.value)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                lineNumber: 901,
+                                                                lineNumber: 960,
                                                                 columnNumber: 31
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1234,7 +1278,7 @@ function BrandsPage() {
                                                                         children: "Save"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                        lineNumber: 909,
+                                                                        lineNumber: 968,
                                                                         columnNumber: 33
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1244,19 +1288,19 @@ function BrandsPage() {
                                                                         children: "Cancel"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                        lineNumber: 915,
+                                                                        lineNumber: 974,
                                                                         columnNumber: 33
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                lineNumber: 908,
+                                                                lineNumber: 967,
                                                                 columnNumber: 31
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                        lineNumber: 889,
+                                                        lineNumber: 948,
                                                         columnNumber: 29
                                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
                                                         children: [
@@ -1268,7 +1312,7 @@ function BrandsPage() {
                                                                         children: palette.name
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                        lineNumber: 927,
+                                                                        lineNumber: 986,
                                                                         columnNumber: 33
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1280,7 +1324,7 @@ function BrandsPage() {
                                                                                 children: "Edit"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                                lineNumber: 931,
+                                                                                lineNumber: 990,
                                                                                 columnNumber: 35
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1289,19 +1333,19 @@ function BrandsPage() {
                                                                                 children: "Remove"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                                lineNumber: 937,
+                                                                                lineNumber: 996,
                                                                                 columnNumber: 35
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                        lineNumber: 930,
+                                                                        lineNumber: 989,
                                                                         columnNumber: 33
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                lineNumber: 926,
+                                                                lineNumber: 985,
                                                                 columnNumber: 31
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1311,7 +1355,7 @@ function BrandsPage() {
                                                                     children: "No colors listed."
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                    lineNumber: 947,
+                                                                    lineNumber: 1006,
                                                                     columnNumber: 35
                                                                 }, this) : palette.colors.map((color)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                         className: "flex items-center gap-2 rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-xs",
@@ -1323,7 +1367,7 @@ function BrandsPage() {
                                                                                 }
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                                lineNumber: 956,
+                                                                                lineNumber: 1015,
                                                                                 columnNumber: 39
                                                                             }, this),
                                                                             color,
@@ -1334,18 +1378,18 @@ function BrandsPage() {
                                                                                 children: "Remove"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                                lineNumber: 961,
+                                                                                lineNumber: 1020,
                                                                                 columnNumber: 39
                                                                             }, this)
                                                                         ]
                                                                     }, `${palette.id}-${color}`, true, {
                                                                         fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                        lineNumber: 952,
+                                                                        lineNumber: 1011,
                                                                         columnNumber: 37
                                                                     }, this))
                                                             }, void 0, false, {
                                                                 fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                lineNumber: 945,
+                                                                lineNumber: 1004,
                                                                 columnNumber: 31
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1361,7 +1405,7 @@ function BrandsPage() {
                                                                                 }))
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                        lineNumber: 975,
+                                                                        lineNumber: 1034,
                                                                         columnNumber: 33
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1371,13 +1415,13 @@ function BrandsPage() {
                                                                         children: "Add color"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                        lineNumber: 986,
+                                                                        lineNumber: 1045,
                                                                         columnNumber: 33
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                lineNumber: 974,
+                                                                lineNumber: 1033,
                                                                 columnNumber: 31
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1396,14 +1440,14 @@ function BrandsPage() {
                                                                                 className: "hidden"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                                lineNumber: 996,
+                                                                                lineNumber: 1055,
                                                                                 columnNumber: 35
                                                                             }, this),
                                                                             imageFileByPaletteId[palette.id]?.name ?? "Choose image"
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                        lineNumber: 995,
+                                                                        lineNumber: 1054,
                                                                         columnNumber: 33
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1414,13 +1458,13 @@ function BrandsPage() {
                                                                         children: imageLoadingByPaletteId[palette.id] ? "Extracting..." : "Extract from image"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                        lineNumber: 1009,
+                                                                        lineNumber: 1068,
                                                                         columnNumber: 33
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                lineNumber: 994,
+                                                                lineNumber: 1053,
                                                                 columnNumber: 31
                                                             }, this),
                                                             imageLoadingByPaletteId[palette.id] ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1434,7 +1478,7 @@ function BrandsPage() {
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                        lineNumber: 1022,
+                                                                        lineNumber: 1081,
                                                                         columnNumber: 35
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$IG$2e$AI$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1446,58 +1490,58 @@ function BrandsPage() {
                                                                             }
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                            lineNumber: 1031,
+                                                                            lineNumber: 1090,
                                                                             columnNumber: 37
                                                                         }, this)
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                        lineNumber: 1030,
+                                                                        lineNumber: 1089,
                                                                         columnNumber: 35
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                                lineNumber: 1021,
+                                                                lineNumber: 1080,
                                                                 columnNumber: 33
                                                             }, this) : null
                                                         ]
                                                     }, void 0, true)
                                                 }, palette.id, false, {
                                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                                    lineNumber: 884,
+                                                    lineNumber: 943,
                                                     columnNumber: 25
                                                 }, this))
                                         }, void 0, false, {
                                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                            lineNumber: 882,
+                                            lineNumber: 941,
                                             columnNumber: 21
                                         }, this)
                                     ]
                                 }, brand.id, true, {
                                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                                    lineNumber: 661,
+                                    lineNumber: 713,
                                     columnNumber: 17
                                 }, this))
                         }, void 0, false, {
                             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                            lineNumber: 659,
+                            lineNumber: 711,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-                    lineNumber: 647,
+                    lineNumber: 699,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-            lineNumber: 556,
+            lineNumber: 608,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/IG.AI/src/app/brands/page.tsx",
-        lineNumber: 555,
+        lineNumber: 607,
         columnNumber: 5
     }, this);
 }

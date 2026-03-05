@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["variants"],
+  "properties": {
+    "variants": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["template_id", "style_id", "format", "copy", "layout", "colors"],
+        "properties": {
+          "template_id": { "type": "string", "minLength": 1 },
+          "style_id": { "type": "string", "minLength": 1 },
+          "format": { "type": "string", "enum": ["square", "portrait", "story"] },
+          "copy": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["headline", "subtitle"],
+            "properties": {
+              "headline": { "type": "string" },
+              "subtitle": { "type": "string" }
+            }
+          },
+          "layout": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["headline_align", "subtitle_align", "badge"],
+            "properties": {
+              "headline_align": { "type": "string", "enum": ["left", "center", "right"] },
+              "subtitle_align": { "type": "string", "enum": ["left", "center", "right"] },
+              "badge": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["enabled", "text"],
+                "properties": {
+                  "enabled": { "type": "boolean" },
+                  "text": { "type": "string" }
+                }
+              }
+            }
+          },
+          "colors": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["accent", "text", "overlay"],
+            "properties": {
+              "accent": {
+                "type": "string",
+                "pattern": "^#[0-9A-Fa-f]{6}$"
+              },
+              "text": {
+                "type": "string",
+                "pattern": "^#[0-9A-Fa-f]{6}$"
+              },
+              "overlay": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["type", "opacity"],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": ["none", "gradient", "solid_bar", "blur_bar"]
+                  },
+                  "opacity": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
